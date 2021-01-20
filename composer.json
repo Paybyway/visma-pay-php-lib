@@ -1,0 +1,22 @@
+{
+    "name": "visma-pay/visma-pay",
+    "type": "library",
+    "description": "Visma Pay PHP Library",
+    "keywords": ["payment", "visma", "visma pay"],
+    "homepage": "https://vismapay.fi",
+    "authors": [
+        {
+            "name": "Visma Pay",
+            "homepage": "https://vismapay.fi"
+        }
+    ],
+    "autoload": {
+        "psr-0": {
+            "VismaPay": "lib/"
+        }
+    },
+    "require-dev": {
+		"phpunit/phpunit": "^9.5.0",
+		"mockery/mockery": "dev-master"
+	}
+}
