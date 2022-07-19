@@ -5,12 +5,9 @@ See documentation at https://www.vismapay.com/docs/web_payments/
 
 The library can be installed using composer.
 
+     composer require visma-pay/visma-pay
+
 To install with composer, add following to composer.json and run ** composer update **
-
-    composer require visma-pay/visma-pay
-    
-
-    
     
     {
       "require": {
