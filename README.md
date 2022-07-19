@@ -9,6 +9,8 @@ To install with composer, add following to composer.json and run ** composer upd
 
     composer require visma-pay/visma-pay
     
+
+    
     
     {
       "require": {
