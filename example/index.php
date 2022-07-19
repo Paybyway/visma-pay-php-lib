@@ -7,7 +7,7 @@ require dirname(__FILE__) . '/../vendor/autoload.php';
 	require dirname(__FILE__) . '/../lib/visma_pay_loader.php';
 */
 
-$vismaPay = new VismaPay\VismaPay('api_key', 'private_key');
+$vismaPay = new \VismaPay\VismaPay('api_key', 'private_key');
 
 $payment_return = '';
 
@@ -106,7 +106,7 @@ if(isset($_GET['action']))
 				exit($error_msg);
 			}
 		}
-		catch(VismaPay\VismaPayException $e)
+		catch(\VismaPay\VismaPayException $e)
 		{
 			exit('Got the following exception: ' . $e->getMessage());
 		}
@@ -129,7 +129,7 @@ else if(isset($_GET['return-from-pay-page']))
 			$payment_return = 'Payment failed (RETURN_CODE: ' . $result->RETURN_CODE . ')';
 		}
 	}
-	catch(VismaPay\VismaPayException $e)
+	catch(\VismaPay\VismaPayException $e)
 	{
 		exit('Got the following exception: ' . $e->getMessage());
 	}
@@ -145,7 +145,7 @@ try
 		exit('Unable to get the payment methods for the merchant. Please check that api key and private key are correct.');
 	}
 }
-catch(VismaPay\VismaPayException $e)
+catch(\VismaPay\VismaPayException $e)
 {
 	exit('Got the following exception: ' . $e->getMessage());
 }
