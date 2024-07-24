@@ -7,7 +7,7 @@ To install with composer, add following to composer.json and run ** composer upd
 
     {
       "require": {
-        "visma-pay/visma-pay": "^1.0.0"
+        "visma-pay/visma-pay": "^1.0.1"
       }
     }
 
