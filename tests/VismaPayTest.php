@@ -380,27 +380,35 @@ class VismaPayTest extends \PHPUnit\Framework\TestCase
 
 	public function testCheckReturnThrowsExceptionIfInvalidMac()
 	{
-		$data = array(
-			'RETURN_CODE' => 0,
-			'ORDER_NUMBER' => '123',
-			'SETTLED' => 1,
-			'AUTHCODE' => 'invalid'
-		);
-
 		$payment = new VismaPay\VismaPay('TESTAPIKEY', 'private_key');
 
-		$msg = '';
+		$invalidAuthcodes = array(
+			'invalid',
+			'6FF25F1E945C0535327AA4B8150FAC9B4AB058ADFE4733AB353EA07D3EFDA791'
+		);
 
-		try
+		foreach ($invalidAuthcodes as $authcode)
 		{
-			$return = $payment->checkReturn($data);
-		}
-		catch(VismaPay\VismaPayException $e)
-		{
-			$msg = $e->getMessage();
-		}
+			$data = array(
+				'RETURN_CODE' => 0,
+				'ORDER_NUMBER' => '123',
+				'SETTLED' => 1,
+				'AUTHCODE' => $authcode
+			);
 
-		$this->assertEquals($msg, 'VismaPay::checkReturn - MAC authentication failed');
+			$msg = '';
+
+			try
+			{
+				$return = $payment->checkReturn($data);
+			}
+			catch(VismaPay\VismaPayException $e)
+			{
+				$msg = $e->getMessage();
+			}
+
+			$this->assertEquals($msg, 'VismaPay::checkReturn - MAC authentication failed');
+		}
 	}
 
 	public function testCheckReturnThrowsExceptionIfNotEnoughData()
@@ -497,6 +505,30 @@ class VismaPayTest extends \PHPUnit\Framework\TestCase
 		$payment = new VismaPay\VismaPay('TESTAPIKEY', 'private_key', 'w3.1', $connector);
 
 		$request = $payment->getMerchantPaymentMethods('SEK');
+
+		$this->assertEquals(json_encode($request), json_encode($response));
+	}
+
+	public function testGetMerchantPaymentMethodsWithChannelSubMerchantIds()
+	{
+		$connector = \Mockery::mock('VismaPay\VismaPayConnector');
+
+		$response = array(
+			'result' => 0,
+			'payment_methods' => array()
+		);
+
+		$connector->shouldReceive("request")->with("merchant_payment_methods", array(
+			'authcode' => '7AEBC755706F5699162A4359A6947DD1CEA8F65FB7E6C38C6E0ED3C03B808E07',
+			'version' => '2',
+			'currency' => 'EUR',
+			'channel_sub_merchant_ids' => array('1', '2'),
+			'api_key' => 'TESTAPIKEY'
+		))->once()->andReturn(json_encode($response));
+
+		$payment = new VismaPay\VismaPay('TESTAPIKEY', 'private_key', 'w3.1', $connector);
+
+		$request = $payment->getMerchantPaymentMethods('EUR', array('1', '2'));
 
 		$this->assertEquals(json_encode($request), json_encode($response));
 	}

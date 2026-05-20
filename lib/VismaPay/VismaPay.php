@@ -170,13 +170,19 @@ class VismaPay
 		));
 	}
 
-	public function getMerchantPaymentMethods($currency = '')
+	public function getMerchantPaymentMethods($currency = '', array $channel_sub_merchant_ids = array())
 	{
-		return $this->makeRequest('merchant_payment_methods', array(
+		$params = array(
 			'authcode' => $this->calcAuthcode($this->api_key),
 			'version' => '2',
 			'currency' => $currency
-		));
+		);
+
+		if (!empty($channel_sub_merchant_ids)) {
+			$params['channel_sub_merchant_ids'] = $channel_sub_merchant_ids;
+		}
+
+		return $this->makeRequest('merchant_payment_methods', $params);
 	}
 
 	public function checkReturn($return_data)
@@ -194,7 +200,14 @@ class VismaPay
 			if(array_key_exists('INCIDENT_ID', $return_data))
 				$mac_input .= '|'.$return_data['INCIDENT_ID'];
 
-			if($return_data['AUTHCODE'] == $this->calcAuthcode($mac_input))
+			$expected = $this->calcAuthcode($mac_input);
+			$provided = (string) $return_data['AUTHCODE'];
+
+			$valid = function_exists('hash_equals')
+				? hash_equals($expected, $provided)
+				: ($expected === $provided);
+
+			if($valid)
 			{
 				return (object)$return_data;
 			}
